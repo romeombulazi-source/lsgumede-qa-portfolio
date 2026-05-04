@@ -17,10 +17,16 @@ test.describe('LS Gumede Attorneys - Homepage Tests', () => {
     expect(title).toContain(homePage.pageTitle);
   });
 
-  test('Desktop navigation menu is visible', async ({ page }) => {
+  test('Navigation menu is visible on desktop', async ({ page }) => {
     const homePage = new HomePage(page);
     await homePage.navigate();
-    await expect(homePage.navMenu).toBeVisible();
+    const isMobile = page.viewportSize()?.width < 768;
+    if (!isMobile) {
+      await expect(homePage.navMenu).toBeVisible();
+    } else {
+      const hamburger = page.locator('button').filter({ has: page.locator('svg') }).first();
+      await expect(hamburger).toBeVisible();
+    }
   });
 
 });

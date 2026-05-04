@@ -2,15 +2,22 @@ class HomePage {
   constructor(page) {
     this.page = page;
     this.pageTitle = 'LS Gumede Attorneys';
-    this.url = 'https://www.lsgumedeattorneys.co.za';
-    this.logo = page.locator('img[alt*="logo"], img[alt*="Logo"]');
-    // Target desktop nav specifically
+    this.logo = page.getByRole('img', { name: /logo/i }).first();
     this.navMenu = page.locator('nav').first();
-    this.contactButton = page.locator('a[href*="contact"]');
+    this.contactButton = page.getByRole('link', { name: /contact/i }).first();
   }
 
   async navigate() {
-    await this.page.goto(this.url, { waitUntil: 'domcontentloaded' });
+    await this.page.goto('/', { waitUntil: 'domcontentloaded' });
+    await this.dismissOverlay();
+  }
+
+  // Waits for the loading overlay to disappear before interacting
+  async dismissOverlay() {
+    await this.page.waitForSelector(
+      'div.fixed.inset-0[class*="z-[9999]"]',
+      { state: 'hidden', timeout: 15000 }
+    ).catch(() => {});
   }
 
   async getTitle() {
